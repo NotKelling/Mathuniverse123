@@ -1,0 +1,44 @@
+[
+    {
+        "name": "Math rush",
+        "link": "games/math-rush.html",
+        "image": "images/mr.jpg",
+        "category": "Educational"
+    },
+    {
+        "name": "equation escape",
+        "link": "games/equation escape.html",
+        "image": "images/ee.jpg",
+        "category": "Educational"
+    },
+    {
+        "name": "math tower",
+        "link": "games/math-tower.html",
+        "image": "images/mt.jpg",
+        "category": "Educational"
+    },
+    {
+        "name": "bitlife",
+        "link": "games/bitlife.html",
+        "image": "images/bl.jpg",
+        "category": "Games"
+    },
+    {
+        "name": "baseball bros",
+        "link": "games/baseball-bros.html",
+        "image": "images/bb.jpg",
+        "category": "Games"
+    },
+    {
+        "name": "geometry dash",
+        "link": "games/geometry-dash-lite.html",
+        "image": "images/gd.jpg",
+        "category": "Games"
+    },
+    {
+        "name": "football bros",
+        "link": "games/football-bros.html",
+        "image": "images/fb.jpg",
+        "category": "Games"
+    }
+]

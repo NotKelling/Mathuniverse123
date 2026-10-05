@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Math Universe</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+
+    <div class="header-content">
+
+        <a href="index.html" class="logo">
+            Math Universe
+        </a>
+
+        <div class="search-box">
+            <span>⌕</span>
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search games..."
+                autocomplete="off"
+            >
+        </div>
+
+    </div>
+
+</header>
+
+
+<main>
+
+    <section class="welcome">
+
+        <h1>Math Universe</h1>
+
+        <p>
+            Games, challenges, and more.
+        </p>
+
+    </section>
+
+
+    <div class="categories">
+
+        <button
+            class="category active"
+            data-category="All"
+        >
+            All
+        </button>
+
+        <button
+            class="category"
+            data-category="Games"
+        >
+            Games
+        </button>
+
+        <button
+            class="category"
+            data-category="Educational"
+        >
+            Educational
+        </button>
+
+        <button
+            class="category"
+            data-category="Other"
+        >
+            Other
+        </button>
+
+    </div>
+
+
+    <div class="section-header">
+
+        <h2 id="categoryTitle">
+            All Games
+        </h2>
+
+        <span id="gameCount">
+            0 games
+        </span>
+
+    </div>
+
+
+    <section
+        class="games-grid"
+        id="gamesGrid"
+    ></section>
+
+
+    <div
+        class="no-results"
+        id="noResults"
+    >
+
+        <div class="no-results-icon">
+            🔍
+        </div>
+
+        <h2>
+            No games found
+        </h2>
+
+        <p>
+            Try searching for something else.
+        </p>
+
+    </div>
+
+</main>
+
+
+<footer>
+
+    <span>Math Universe</span>
+
+    <span>•</span>
+
+    <span>Games &amp; Fun</span>
+
+</footer>
+
+
+<script>
+
+const gamesGrid =
+    document.getElementById("gamesGrid");
+
+const searchInput =
+    document.getElementById("searchInput");
+
+const noResults =
+    document.getElementById("noResults");
+
+const gameCount =
+    document.getElementById("gameCount");
+
+const categoryTitle =
+    document.getElementById("categoryTitle");
+
+const categoryButtons =
+    document.querySelectorAll(".category");
+
+
+let games = [];
+
+let selectedCategory = "All";
+
+
+async function loadGames() {
+
+    try {
+
+        const response =
+            await fetch("games.json");
+
+        if (!response.ok) {
+            throw new Error("Could not load games");
+        }
+
+        games =
+            await response.json();
+
+        displayGames();
+
+    } catch (error) {
+
+        gamesGrid.innerHTML = `
+            <div class="error">
+                <h2>Couldn't load the games</h2>
+                <p>Check your games.json file.</p>
+            </div>
+        `;
+
+    }
+
+}
+
+
+function displayGames() {
+
+    const search =
+        searchInput.value
+        .toLowerCase()
+        .trim();
+
+
+    const filteredGames =
+        games.filter(game => {
+
+            const matchesSearch =
+                game.name
+                .toLowerCase()
+                .includes(search);
+
+
+            const matchesCategory =
+                selectedCategory === "All" ||
+                game.category === selectedCategory;
+
+
+            return (
+                matchesSearch &&
+                matchesCategory
+            );
+
+        });
+
+
+    gamesGrid.innerHTML = "";
+
+
+    gameCount.textContent =
+        `${filteredGames.length} game${filteredGames.length === 1 ? "" : "s"}`;
+
+
+    if (filteredGames.length === 0) {
+
+        noResults.style.display =
+            "block";
+
+        return;
+
+    }
+
+
+    noResults.style.display =
+        "none";
+
+
+    filteredGames.forEach(
+        (game, index) => {
+
+        const card =
+            document.createElement("a");
+
+
+        card.className =
+            "game-card";
+
+
+        card.href =
+            `play.html?name=${encodeURIComponent(game.name)}&url=${encodeURIComponent(game.link)}`;
+
+
+        card.style.animationDelay =
+            `${index * 0.05}s`;
+
+
+        card.innerHTML = `
+
+            <div class="thumbnail">
+
+                <img
+                    src="${game.image}"
+                    alt="${game.name}"
+                    loading="lazy"
+                >
+
+                <div class="play-overlay">
+                    <div class="play-button">
+                        ▶
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="game-info">
+
+                <div class="game-top">
+
+                    <h3>
+                        ${game.name}
+                    </h3>
+
+                    <span class="tag">
+                        ${game.category || "Other"}
+                    </span>
+
+                </div>
+
+
+                <div class="game-bottom">
+
+                    <span>
+                        Play now
+                    </span>
+
+                    <span class="arrow">
+                        →
+                    </span>
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        gamesGrid.appendChild(card);
+
+    });
+
+}
+
+
+/* CATEGORY BUTTONS */
+
+categoryButtons.forEach(button => {
+
+    button.addEventListener(
+        "click",
+        () => {
+
+        categoryButtons.forEach(
+            btn => {
+                btn.classList.remove(
+                    "active"
+                );
+            }
+        );
+
+
+        button.classList.add("active");
+
+
+        selectedCategory =
+            button.dataset.category;
+
+
+        categoryTitle.textContent =
+            selectedCategory === "All"
+                ? "All Games"
+                : selectedCategory;
+
+
+        displayGames();
+
+    });
+
+});
+
+
+/* SEARCH */
+
+searchInput.addEventListener(
+    "input",
+    displayGames
+);
+
+
+loadGames();
+
+</script>
+
+</body>
+</html>
